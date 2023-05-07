@@ -1,30 +1,64 @@
 package com.es.phoneshop.model.product;
 
-import java.math.BigDecimal;
-import java.util.Currency;
+import lombok.EqualsAndHashCode;
 
-public class Product {
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.*;
+
+@EqualsAndHashCode
+public class Product{
     private Long id;
     private String code;
     private String description;
-    /** null means there is no price because the product is outdated or new */
-    private BigDecimal price;
-    /** can be null if the price is null */
+    /**
+     * null means there is no price because the product is outdated or new
+     */
     private Currency currency;
     private int stock;
     private String imageUrl;
+    /**
+     * created inner class Changer for comfortable updating of product
+     */
+    @EqualsAndHashCode.Exclude
+    private final Changer changer = new Changer();
+
+    @EqualsAndHashCode.Exclude
+    private final List<PriceInfo> priceInfoList = new ArrayList<>();
 
     public Product() {
     }
 
+    /**
+     * constructor for inner initialization
+     */
     public Product(Long id, String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
         this.id = id;
+        init(code, description, price, currency, stock, imageUrl);
+    }
+
+    /**
+     * constructor for saving from client
+     */
+    public Product(String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
+        init(code, description, price, currency, stock, imageUrl);
+    }
+
+    private void init(String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
         this.code = code;
         this.description = description;
-        this.price = price;
         this.currency = currency;
         this.stock = stock;
         this.imageUrl = imageUrl;
+        priceInfoList.add(new PriceInfo(getDate(), price));
+    }
+
+    private String getDate() {
+        LocalDate time = LocalDate.now();
+        return time.getDayOfMonth() + " " + time.getMonth().name().substring(0, 3) + " " + time.getYear();
+    }
+    public List<PriceInfo> getPriceInfoList(){
+        return this.priceInfoList;
     }
 
     public Long getId() {
@@ -52,11 +86,11 @@ public class Product {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return priceInfoList.get(priceInfoList.size() - 1).getPrice();
     }
 
     public void setPrice(BigDecimal price) {
-        this.price = price;
+        priceInfoList.add(new PriceInfo(getDate(), price));
     }
 
     public Currency getCurrency() {
@@ -82,4 +116,69 @@ public class Product {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public Changer changer() {
+        return this.changer;
+    }
+
+    /**
+     * like builder but changer
+     */
+    public class Changer {
+
+        private Changer() {
+        }
+
+        public Changer id(Long id) {
+            if (!Product.this.id.equals(id) && id != null) {
+                Product.this.id = id;
+            }
+            return this;
+        }
+
+        public Changer code(String code) {
+            if (!Product.this.code.equals(code) && code != null) {
+                Product.this.code = code;
+            }
+            return this;
+        }
+
+        public Changer description(String description) {
+            if (!Product.this.description.equals(description) && description != null) {
+                Product.this.description = description;
+            }
+            return this;
+        }
+
+        public Changer price(BigDecimal price) {
+            setPrice(price);
+            return this;
+        }
+
+        public Changer currency(Currency currency) {
+            if (!Product.this.currency.equals(currency) && currency != null) {
+                Product.this.currency = currency;
+            }
+            return this;
+        }
+
+        public Changer stock(int stock) {
+            if (Product.this.stock != stock) {
+                Product.this.stock = stock;
+            }
+            return this;
+        }
+
+        public Changer imageUrl(String imageUrl) {
+            if (!Product.this.imageUrl.equals(imageUrl) && imageUrl != null) {
+                Product.this.imageUrl = imageUrl;
+            }
+            return this;
+        }
+
+        public Product change() {
+            return Product.this;
+        }
+    }
+
 }
