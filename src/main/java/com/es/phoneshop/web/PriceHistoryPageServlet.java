@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 
 public class PriceHistoryPageServlet extends HttpServlet {
     private ProductDao productDao;
@@ -24,7 +23,6 @@ public class PriceHistoryPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, ProductNotFoundException {
         Long id = Long.valueOf(req.getParameter("id"));
-        productDao.getProduct(id).setPrice(BigDecimal.valueOf(500));
         req.setAttribute("product", productDao.getProduct(id));
         req.getRequestDispatcher("/WEB-INF/pages/priceHistory.jsp").forward(req, resp);
     }

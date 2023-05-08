@@ -24,11 +24,7 @@ public class DemoDataServletContextListener implements ServletContextListener {
 
         if (flag) {
             for (Product product : getProducts()) {
-                try {
-                    productDao.save(product);
-                } catch (RuntimeException e) {
-                    throw new RuntimeException("Failed to insert demo data", e);
-                }
+                productDao.save(product);
             }
         }
     }

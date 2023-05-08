@@ -8,6 +8,7 @@ import java.util.*;
 
 @EqualsAndHashCode
 public class Product{
+    @EqualsAndHashCode.Exclude
     private Long id;
     private String code;
     private String description;
@@ -50,13 +51,9 @@ public class Product{
         this.currency = currency;
         this.stock = stock;
         this.imageUrl = imageUrl;
-        priceInfoList.add(new PriceInfo(getDate(), price));
+        priceInfoList.add(new PriceInfo(LocalDate.now(), price));
     }
 
-    private String getDate() {
-        LocalDate time = LocalDate.now();
-        return time.getDayOfMonth() + " " + time.getMonth().name().substring(0, 3) + " " + time.getYear();
-    }
     public List<PriceInfo> getPriceInfoList(){
         return this.priceInfoList;
     }
@@ -90,7 +87,7 @@ public class Product{
     }
 
     public void setPrice(BigDecimal price) {
-        priceInfoList.add(new PriceInfo(getDate(), price));
+        priceInfoList.add(new PriceInfo(LocalDate.now(), price));
     }
 
     public Currency getCurrency() {
