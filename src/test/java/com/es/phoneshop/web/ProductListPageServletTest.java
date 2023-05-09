@@ -42,5 +42,6 @@ public class ProductListPageServletTest {
 
         verify(requestDispatcher).forward(request, response);
         verify(request).setAttribute(eq("products"), any());
+
     }
 }

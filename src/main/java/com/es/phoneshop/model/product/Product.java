@@ -1,19 +1,19 @@
 package com.es.phoneshop.model.product;
 
-import java.math.BigDecimal;
-import java.util.Currency;
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
 
-public class Product implements Cloneable {
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.*;
+
+@EqualsAndHashCode
+public class Product {
+    @EqualsAndHashCode.Exclude
     private Long id;
     private String code;
     private String description;
     /**
      * null means there is no price because the product is outdated or new
-     */
-    private BigDecimal price;
-    /**
-     * can be null if the price is null
      */
     private Currency currency;
     private int stock;
@@ -21,10 +21,13 @@ public class Product implements Cloneable {
     /**
      * created inner class Changer for comfortable updating of product
      */
-    private Changer changer;
+    @EqualsAndHashCode.Exclude
+    private final Changer changer = new Changer();
+
+    @EqualsAndHashCode.Exclude
+    private final List<PriceInfo> priceInfoList = new ArrayList<>();
 
     public Product() {
-        this.changer = new Changer();
     }
 
     /**
@@ -32,26 +35,27 @@ public class Product implements Cloneable {
      */
     public Product(Long id, String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
         this.id = id;
-        this.code = code;
-        this.description = description;
-        this.price = price;
-        this.currency = currency;
-        this.stock = stock;
-        this.imageUrl = imageUrl;
-        this.changer = new Changer();
+        init(code, description, price, currency, stock, imageUrl);
     }
 
     /**
      * constructor for saving from client
      */
     public Product(String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
+        init(code, description, price, currency, stock, imageUrl);
+    }
+
+    private void init(String code, String description, BigDecimal price, Currency currency, int stock, String imageUrl) {
         this.code = code;
         this.description = description;
-        this.price = price;
         this.currency = currency;
         this.stock = stock;
         this.imageUrl = imageUrl;
-        this.changer = new Changer();
+        priceInfoList.add(new PriceInfo(LocalDate.now(), price));
+    }
+
+    public List<PriceInfo> getPriceInfoList() {
+        return this.priceInfoList;
     }
 
     public Long getId() {
@@ -79,11 +83,11 @@ public class Product implements Cloneable {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return priceInfoList.get(priceInfoList.size() - 1).getPrice();
     }
 
     public void setPrice(BigDecimal price) {
-        this.price = price;
+        priceInfoList.add(new PriceInfo(LocalDate.now(), price));
     }
 
     public Currency getCurrency() {
@@ -144,9 +148,7 @@ public class Product implements Cloneable {
         }
 
         public Changer price(BigDecimal price) {
-            if (!Product.this.price.equals(price) && price != null) {
-                Product.this.price = price;
-            }
+            setPrice(price);
             return this;
         }
 
@@ -176,27 +178,4 @@ public class Product implements Cloneable {
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Product product = (Product) o;
-        return stock == product.stock
-                && Objects.equals(id, product.id)
-                && Objects.equals(code, product.code)
-                && Objects.equals(description, product.description)
-                && Objects.equals(price, product.price)
-                && Objects.equals(currency, product.currency)
-                && Objects.equals(imageUrl, product.imageUrl);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, code, description, price, currency, stock, imageUrl);
-    }
-
-    @Override
-    protected Product clone() throws CloneNotSupportedException {
-        return (Product) super.clone();
-    }
 }

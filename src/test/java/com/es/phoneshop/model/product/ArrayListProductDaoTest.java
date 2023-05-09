@@ -1,49 +1,49 @@
 package com.es.phoneshop.model.product;
 
-import org.junit.Before;
+import com.es.phoneshop.exception.ProductNotFoundException;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.Currency;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
 
 public class ArrayListProductDaoTest {
     private ProductDao productDao;
     private Product productToSave;
+    private Currency usd = Currency.getInstance("USD");
+    private List<Product> sampleProducts;
 
-    @Before
-    public void setup() {
-        productDao = new ArrayListProductDao();
-        Currency usd = Currency.getInstance("USD");
+    public ArrayListProductDaoTest() {
+        productDao = ArrayListProductDao.INSTANCE;
         productToSave = new Product("test", "test", new BigDecimal(150), usd, 40, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg");
+        sampleProducts = new ArrayList<>();
+
+        sampleProducts.add(new Product("slls", "new", new BigDecimal(70), usd, 5, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg"));
+        sampleProducts.add(new Product("mxmv", "kdk", new BigDecimal(60), usd, -3, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg"));
+        sampleProducts.add(new Product("oddl", "oowow", new BigDecimal(120), usd, 7, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg"));
+        sampleProducts.add(new Product("oeppe", "kkel", new BigDecimal(40), usd, 9, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg"));
+
+        setSampleProductsInDao();
     }
 
-    @Test
-    public void whenFindProductsThenReturnNotEmptyProductsArray() {
-        assertNotNull(productDao.findProducts());
-        assertFalse(productDao.findProducts().isEmpty());
-    }
-
-    @Test(expected = RuntimeException.class)
+    @Test(expected = ProductNotFoundException.class)
     public void whenFindProductByIncorrectIdThenThrowException() {
         productDao.getProduct(0L);
     }
 
     @Test
     public void whenFindProductByCorrectIdThenReturnProduct() {
-        for (Product product : productDao.findProducts()) {
-            long id = product.getId();
-            assertNotNull(productDao.getProduct(id));
-        }
+        Product result = productDao.getProduct(1L);
+        assertNotNull(result);
     }
 
     @Test
     public void whenFindProductsThenReturnProductsWithNotNullPriceAndPositiveStock() {
-        for (Product product : productDao.findProducts()) {
-            assertNotNull(product);
-            assertNotNull(product.getPrice());
+        for (Product product : productDao.findProductsByNameAndSort(null, null, null)) {
             assertTrue(product.getStock() > 0);
+            assertNotNull(product.getPrice());
         }
     }
 
@@ -65,23 +65,104 @@ public class ArrayListProductDaoTest {
         assertNotNull(productToSave.getId());
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = ProductNotFoundException.class)
     public void whenDeleteProductThenShouldThrowExceptionAfterGettingOfDeletedProduct() {
         productDao.delete(1L);
         productDao.getProduct(1L);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = ProductNotFoundException.class)
     public void whenDeleteProductWithIncorrectIdThenShouldThrowException() {
         productDao.delete(0L);
     }
 
     @Test
-    public void whenProductToSaveHasNotNullExistedIdThenShouldUpdate() throws CloneNotSupportedException {
-        Product oldProduct = productDao.getProduct(1L).clone();
-        Product newProduct = new Product(1L, "update", "update", new BigDecimal(100), Currency.getInstance("USD"), 5, "xxxxxx");
-        productDao.save(newProduct);
-        assertNotEquals(oldProduct, newProduct);
-        assertEquals(productDao.getProduct(1L), newProduct);
+    public void whenProductToSaveHasNotNullExistedIdThenShouldUpdate() {
+        Product updatedProduct = new Product(1L, "slls", "new", new BigDecimal(100), usd, 5, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg");
+        productDao.save(updatedProduct);
+        assertEquals(productDao.getProduct(1L), updatedProduct);
+    }
+
+    @Test
+    public void whenFindProductsByQueryThenShouldReturnCorrectList() {
+        for (Product product : productDao.findProductsByNameAndSort("o", null, null)) {
+            assertTrue(product.getDescription().contains("o"));
+        }
+    }
+
+    @Test
+    public void whenFindProductsByAscPriceThenShouldReturnCorrectList() {
+        List<Product> expected = getFilteredList(getAscPriceSortedList());
+        List<Product> result = productDao.findProductsByNameAndSort(null, SortField.price, SortOrder.asc);
+        assertEquals(result, expected);
+    }
+
+    @Test
+    public void whenFindProductsByDescPriceThenShouldReturnCorrectList() {
+        List<Product> expected = getFilteredList(getAscPriceSortedList());
+        Collections.reverse(expected);
+        List<Product> result = productDao.findProductsByNameAndSort(null, SortField.price, SortOrder.desc);
+        assertEquals(result, expected);
+    }
+
+    @Test
+    public void whenFindProductsByPriceWithoutSortingThenShouldReturnCorrectList() {
+        List<Product> expected = getFilteredList(sampleProducts);
+        List<Product> result = productDao.findProductsByNameAndSort(null, SortField.price, null);
+        assertEquals(result, expected);
+    }
+
+    @Test
+    public void whenFindProductsWithoutFieldButWithSortingThenShouldReturnCorrectList() {
+        List<Product> expected = getFilteredList(sampleProducts);
+        List<Product> result = productDao.findProductsByNameAndSort(null, null, SortOrder.desc);
+        assertEquals(result, expected);
+    }
+
+    @Test
+    public void whenFindProductsByAscDescriptionThenShouldReturnCorrectList() {
+        List<Product> expected = getFilteredList(getAscDescriptionSortedList());
+        List<Product> result = productDao.findProductsByNameAndSort(null, SortField.description, SortOrder.asc);
+        assertEquals(result, expected);
+    }
+
+    @Test
+    public void whenFindProductsByDescDescriptionThenShouldReturnCorrectList() {
+        List<Product> expected = getFilteredList(getAscDescriptionSortedList());
+        Collections.reverse(expected);
+        List<Product> result = productDao.findProductsByNameAndSort(null, SortField.description, SortOrder.desc);
+        assertEquals(result, expected);
+    }
+
+    private void setSampleProductsInDao() {
+        for (Product product : sampleProducts) {
+            productDao.save(product);
+        }
+    }
+
+    private List<Product> getAscPriceSortedList() {
+        return sampleProducts.stream()
+                .sorted(new Comparator<Product>() {
+                    @Override
+                    public int compare(Product o1, Product o2) {
+                        return o1.getPrice().compareTo(o2.getPrice());
+                    }
+                }).toList();
+    }
+
+    private List<Product> getAscDescriptionSortedList() {
+        return sampleProducts.stream()
+                .sorted(new Comparator<Product>() {
+                    @Override
+                    public int compare(Product o1, Product o2) {
+                        return o1.getDescription().compareTo(o2.getDescription());
+                    }
+                }).toList();
+    }
+
+    private List<Product> getFilteredList(List<Product> products) {
+        return products.stream()
+                .filter(product -> product.getPrice() != null && product.getStock() > 0)
+                .collect(Collectors.toList());
     }
 }
