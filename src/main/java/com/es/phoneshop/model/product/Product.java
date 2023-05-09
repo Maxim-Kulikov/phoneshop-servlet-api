@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @EqualsAndHashCode
-public class Product{
+public class Product {
     @EqualsAndHashCode.Exclude
     private Long id;
     private String code;
@@ -54,7 +54,7 @@ public class Product{
         priceInfoList.add(new PriceInfo(LocalDate.now(), price));
     }
 
-    public List<PriceInfo> getPriceInfoList(){
+    public List<PriceInfo> getPriceInfoList() {
         return this.priceInfoList;
     }
 

@@ -3,10 +3,7 @@ package com.es.phoneshop.model.product;
 import com.es.phoneshop.exception.ProductNotFoundException;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -79,7 +76,7 @@ public enum ArrayListProductDao implements ProductDao {
                 .sorted(new RelevanceComparator(queries));
     }
 
-    private String[] split(String query){
+    private String[] split(String query) {
         return query.trim().split("[\\s]+");
     }
 
@@ -89,13 +86,13 @@ public enum ArrayListProductDao implements ProductDao {
     }
 
     private Comparator<Product> sortComparator(SortField sortField, SortOrder sortOrder) {
-        if(sortField == SortField.price){
-            if(sortOrder == SortOrder.asc){
+        if (sortField == SortField.price) {
+            if (sortOrder == SortOrder.asc) {
                 return ascPriceComparator;
             }
             return descPriceComparator;
         }
-        if(sortOrder == SortOrder.asc){
+        if (sortOrder == SortOrder.asc) {
             return ascDescriptionComparator;
         }
         return descDescriptionComparator;
@@ -114,14 +111,9 @@ public enum ArrayListProductDao implements ProductDao {
         return false;
     }
 
-    private int countNumOfMatchingSubstrings(String description, String[] queries){
-        int i = 0;
-        for (String x : queries) {
-            if (description.toLowerCase().contains(x.toLowerCase())) {
-                i++;
-            }
-        }
-        return i;
+    private int countNumOfMatchingSubstrings(String description, String[] queries) {
+        String formattedDescription = description.toLowerCase();
+        return (int) Arrays.stream(queries).filter(query -> formattedDescription.contains(query.toLowerCase())).count();
     }
 
     private boolean productPriceNotNull(Product product) {
