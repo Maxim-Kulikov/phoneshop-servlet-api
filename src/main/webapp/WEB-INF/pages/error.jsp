@@ -5,5 +5,4 @@
 
 <tags:master pageTitle="Error">
     <h1>Sorry, error was occurred</h1>
-    <p>(c) Expert-Soft</p>
 </tags:master>

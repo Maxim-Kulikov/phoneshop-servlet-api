@@ -8,5 +8,4 @@
     <p>
         Product with code ${pageContext.exception.getProductId()} not found
     </p>
-    <p>(c) Expert-Soft</p>
 </tags:master>

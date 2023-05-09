@@ -24,5 +24,4 @@
         </c:forEach>
         </tr>
     </table>
-    <p>(c) Expert-Soft</p>
 </tags:master>

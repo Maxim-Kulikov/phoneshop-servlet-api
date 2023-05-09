@@ -34,5 +34,4 @@
             <td>${product.code}</td>
         </tr>
     </table>
-    <p>(c) Expert-Soft</p>
 </tags:master>
