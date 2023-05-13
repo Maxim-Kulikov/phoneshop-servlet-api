@@ -1,6 +1,8 @@
 package com.es.phoneshop.model.product;
 
 import com.es.phoneshop.exception.ProductNotFoundException;
+import com.es.phoneshop.model.sortenum.SortField;
+import com.es.phoneshop.model.sortenum.SortOrder;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.*;
