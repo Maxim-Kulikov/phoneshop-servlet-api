@@ -3,16 +3,14 @@ package com.es.phoneshop.web;
 import com.es.phoneshop.dto.ViewedProductDto;
 import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.exception.ProductNotFoundException;
-import com.es.phoneshop.mapper.ProductMapper;
-import com.es.phoneshop.mapper.impl.ProductMapperImpl;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.cart.DefaultCartService;
 import com.es.phoneshop.model.product.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
-import com.es.phoneshop.model.product.viewed.ViewedProductsServiceImpl;
 import com.es.phoneshop.model.product.viewed.ViewedProductsService;
+import com.es.phoneshop.model.product.viewed.ViewedProductsServiceImpl;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -27,7 +25,6 @@ import java.util.List;
 public class ProductDetailsPageServlet extends HttpServlet {
     private ProductDao productDao;
     private CartService cartService;
-    private ProductMapper productMapper;
     private ViewedProductsService viewedProductsService;
 
     @Override
@@ -35,7 +32,6 @@ public class ProductDetailsPageServlet extends HttpServlet {
         super.init(config);
         this.productDao = ArrayListProductDao.INSTANCE;
         this.cartService = DefaultCartService.INSTANCE;
-        this.productMapper = new ProductMapperImpl();
         this.viewedProductsService = ViewedProductsServiceImpl.INSTANCE;
     }
 
@@ -94,8 +90,5 @@ public class ProductDetailsPageServlet extends HttpServlet {
         return str.trim().replaceAll(" ", "");
     }
 
-    private void addViewedProduct(HttpServletRequest req, Product product) {
-
-    }
 }
 

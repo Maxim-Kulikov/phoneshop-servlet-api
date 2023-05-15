@@ -30,17 +30,12 @@ public enum DefaultCartService implements CartService {
 
     @Override
     public Cart getCart(HttpServletRequest request) {
-        try {
-            readLock.lock();
-            Cart cart = (Cart) request.getSession().getAttribute(CART_SESSION_ATTRIBUTE);
-            if (cart == null) {
-                cart = new Cart();
-                request.getSession().setAttribute(CART_SESSION_ATTRIBUTE, cart);
-            }
-            return cart;
-        } finally {
-            readLock.unlock();
+        Cart cart = (Cart) request.getSession().getAttribute(CART_SESSION_ATTRIBUTE);
+        if (cart == null) {
+            cart = new Cart();
+            request.getSession().setAttribute(CART_SESSION_ATTRIBUTE, cart);
         }
+        return cart;
     }
 
     @Override
@@ -50,7 +45,7 @@ public enum DefaultCartService implements CartService {
             Product product = productDao.getProduct(productId);
             StockInfo stockInfo = getStockInfo(cart, product, quantity);
             if (stockInfo.availableQuantity - stockInfo.requiredQuantity >= 0) {
-                cart.add(new CartItem(product, quantity));
+                addToCart(cart, new CartItem(product, quantity));
             } else {
                 throw new OutOfStockException(product, stockInfo.requiredQuantity, stockInfo.availableQuantity);
             }
@@ -67,6 +62,16 @@ public enum DefaultCartService implements CartService {
         int requiredQuantity = optionalCartItem.get().getQuantity() + quantity;
         int availableQuantity = product.getStock();
         return new StockInfo(requiredQuantity, availableQuantity);
+    }
+
+    private void addToCart(Cart cart, CartItem cartItem) {
+        Long productId = cartItem.getProduct().getId();
+        Optional<CartItem> optionalCartItem = cart.getOptionalOfCartItem(productId);
+        if (optionalCartItem.isEmpty()) {
+            cart.add(cartItem);
+        } else {
+            optionalCartItem.get().addQuantity(cartItem.getQuantity());
+        }
     }
 
     @AllArgsConstructor

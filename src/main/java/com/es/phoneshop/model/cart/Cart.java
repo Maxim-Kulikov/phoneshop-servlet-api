@@ -15,13 +15,7 @@ public class Cart {
     }
 
     public void add(CartItem cartItem) {
-        Long productId = cartItem.getProduct().getId();
-        Optional<CartItem> optionalCartItem = getOptionalOfCartItem(productId);
-        if (optionalCartItem.isEmpty()) {
-            items.add(cartItem);
-        } else {
-            optionalCartItem.get().addQuantity(cartItem.getQuantity());
-        }
+        items.add(cartItem);
     }
 
     public Optional<CartItem> getOptionalOfCartItem(Long id) {

@@ -31,18 +31,14 @@ public enum ViewedProductsServiceImpl implements ViewedProductsService {
 
     @Override
     public List<ViewedProductDto> getViewedProducts(HttpServletRequest request) {
-        try {
-            readLock.lock();
-            List<ViewedProductDto> viewedProducts =
-                    (List<ViewedProductDto>) request.getSession().getAttribute(VIEWED_SESSION_ATTRIBUTE);
-            if (viewedProducts == null) {
-                viewedProducts = new ArrayList<>();
-                request.getSession().setAttribute(VIEWED_SESSION_ATTRIBUTE, viewedProducts);
-            }
-            return viewedProducts;
-        } finally {
-            readLock.unlock();
+        List<ViewedProductDto> viewedProducts =
+                (List<ViewedProductDto>) request.getSession().getAttribute(VIEWED_SESSION_ATTRIBUTE);
+        if (viewedProducts == null) {
+            viewedProducts = new ArrayList<>();
+            request.getSession().setAttribute(VIEWED_SESSION_ATTRIBUTE, viewedProducts);
         }
+        return viewedProducts;
+
     }
 
     @Override
