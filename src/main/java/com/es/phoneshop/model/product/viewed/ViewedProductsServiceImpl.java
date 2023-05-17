@@ -16,18 +16,15 @@ import java.util.stream.Collectors;
 public enum ViewedProductsServiceImpl implements ViewedProductsService {
     INSTANCE;
 
-    private static final String VIEWED_SESSION_ATTRIBUTE = "viewedProducts";
-    private final Lock readLock;
+    private final String VIEWED_SESSION_ATTRIBUTE = "viewedProducts";
     private final Lock writeLock;
     private final ProductMapper productMapper;
 
     ViewedProductsServiceImpl() {
         ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-        readLock = readWriteLock.readLock();
         writeLock = readWriteLock.writeLock();
         productMapper = new ProductMapperImpl();
     }
-
 
     @Override
     public List<ViewedProductDto> getViewedProducts(HttpServletRequest request) {
@@ -54,5 +51,4 @@ public enum ViewedProductsServiceImpl implements ViewedProductsService {
             writeLock.unlock();
         }
     }
-
 }

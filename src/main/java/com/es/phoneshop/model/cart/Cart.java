@@ -1,11 +1,13 @@
 package com.es.phoneshop.model.cart;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@EqualsAndHashCode
 @Getter
 public class Cart {
     private final List<CartItem> items;

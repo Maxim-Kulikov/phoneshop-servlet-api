@@ -8,6 +8,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -16,16 +20,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ViewedProductsServiceTest {
     private List<ViewedProductDto> viewedProducts;
     private String ATTRIBUTE_NAME = "viewed";
-    private HttpServletRequest request = mock(HttpServletRequest.class);
-    private HttpSession session = mock(HttpSession.class);
+    @Mock
+    private HttpServletRequest request;
+    @Mock
+    private HttpSession session;
     private Currency currency = Currency.getInstance("USD");
-    private ViewedProductsService viewedProductsService;
+    @InjectMocks
+    private ViewedProductsService viewedProductsService = ViewedProductsServiceImpl.INSTANCE;
     private ProductMapper productMapper = new ProductMapperImpl();
     private Product testProduct;
 
@@ -67,6 +74,4 @@ public class ViewedProductsServiceTest {
 
         assertEquals(expected, result);
     }
-
-
 }

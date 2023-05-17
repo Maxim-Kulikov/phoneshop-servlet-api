@@ -53,16 +53,11 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String quantityStr = replaceAllSpaces(req.getParameter("quantity"));
         Long productId = parseProductId(req);
 
         int quantity = 0;
         try {
-            NumberFormat format = NumberFormat.getInstance(req.getLocale());
-            quantity = format.parse(quantityStr).intValue();
-            if (quantity < 1) {
-                throw new NumberFormatException();
-            }
+            quantity = getQuantityIfValid(req);
         } catch (ParseException | NumberFormatException e) {
             req.setAttribute("error", "Incorrect number");
             doGet(req, resp);
@@ -81,14 +76,23 @@ public class ProductDetailsPageServlet extends HttpServlet {
         resp.sendRedirect(req.getContextPath() + "/products/" + productId + "?message=Product added to cart");
     }
 
+    private int getQuantityIfValid(HttpServletRequest request) throws ParseException {
+        int quantity;
+        String quantityStr = request.getParameter("quantity");
+
+        quantity = Integer.parseInt(quantityStr);
+        NumberFormat format = NumberFormat.getInstance(request.getLocale());
+        quantity = format.parse(Integer.toString(quantity)).intValue();
+        if (quantity < 1) {
+            throw new NumberFormatException();
+        }
+
+        return quantity;
+    }
+
     private Long parseProductId(HttpServletRequest req) {
         String productInfo = req.getPathInfo().substring(1);
         return Long.valueOf(productInfo);
     }
-
-    private String replaceAllSpaces(String str) {
-        return str.trim().replaceAll(" ", "");
-    }
-
 }
 
