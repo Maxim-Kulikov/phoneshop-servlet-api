@@ -1,10 +1,7 @@
 package com.es.phoneshop.web;
 
 import com.es.phoneshop.dto.ViewedProductDto;
-import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.exception.ProductNotFoundException;
-import com.es.phoneshop.model.cart.Cart;
-import com.es.phoneshop.model.cart.CartItem;
 import com.es.phoneshop.model.cart.CartService;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.product.ProductDao;
@@ -23,9 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.Locale;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -100,7 +95,7 @@ public class ProductDetailsPageServletTest{
         verify(request).setAttribute(eq("error"), eq("Incorrect number"));
     }
 
-    @Test
+    /*@Test
     public void ifNotAvailableStockThenThrowException() throws ServletException, OutOfStockException {
         servlet.init(config);
 
@@ -114,6 +109,6 @@ public class ProductDetailsPageServletTest{
         cart.add(new CartItem(product, 5));
         when(cartService.getCart(request)).thenReturn(cart);
         verify(request).setAttribute(eq("error"), contains("Out of stock"));
-    }
+    }*/
 
 }

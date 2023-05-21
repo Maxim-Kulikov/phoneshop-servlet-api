@@ -20,12 +20,14 @@
                 <tags:sortLink sort="description" order="asc"/>
                 <tags:sortLink sort="description" order="desc"/>
             </td>
+            <td>Quantity</td>
             <td class="price">Price
                     <tags:sortLink sort="price" order="asc"/>
                     <tags:sortLink sort="price" order="desc"/>
+            <td></td>
         </tr>
         </thead>
-        <c:forEach var="product" items="${products}">
+        <c:forEach var="product" items="${products}" varStatus="status">
             <tr>
                 <td>
                     <img class="product-tile" src="${product.imageUrl}">
@@ -34,6 +36,26 @@
                     <a href="${pageContext.servletContext.contextPath}/products/${product.id}">
                             ${product.description}
                 </td>
+                <td class="quantity">
+                    <input
+                            form="addCartItem"
+                            name="quantity"
+                            type="text"
+                            value="${not empty error and (param.productId eq product.id) ? param.quantity : 1}"
+                            class="quantity"
+
+                    />
+                    <c:if test="${not empty error and (param.productId eq product.id)}">
+                        <div class="error">
+                                ${error}
+                        </div>
+                    </c:if>
+                    <c:if test="${not empty message and (param.productId eq product.id)}">
+                        <div class="success">
+                                ${message}
+                        </div>
+                    </c:if>
+                </td>
                 <td class="price">
                     <a href="${pageContext.servletContext.contextPath}/products/price-history?id=${product.id}">
                             <fmt:formatNumber value="${product.price}"
@@ -41,26 +63,15 @@
                                               currencySymbol="${product.currency.symbol}"
                             />
                 </td>
+                <td>
+                    <button form="addCartItem"
+                            formaction="${pageContext.servletContext.contextPath}/products/addToCart?productId=${product.id}&quantity=1">
+                        Add to cart
+                    </button>
+                </td>
             </tr>
         </c:forEach>
     </table>
-<%--    <c:if test="${not empty viewedProducts}">--%>
-<%--        <h3>Recently viewed</h3>--%>
-<%--    </c:if>--%>
-<%--    <table >--%>
-<%--        <c:forEach var="viewedProduct" items="${viewedProducts}">--%>
-<%--            <td>--%>
-<%--                <img class="product-tile" src="${viewedProduct.imageUrl}">--%>
-<%--                <p></p>--%>
-<%--                <a href="${pageContext.servletContext.contextPath}/products/${viewedProduct.id}">--%>
-<%--                        ${viewedProduct.description}--%>
-<%--                </a>--%>
-<%--                    <p><fmt:formatNumber value="${viewedProduct.price}"--%>
-<%--                                         type="currency"--%>
-<%--                                         currencySymbol="${viewedProduct.currency.symbol}"></fmt:formatNumber>--%>
-<%--                    </p>--%>
-<%--            </td>--%>
-<%--        </c:forEach>--%>
-<%--    </table>--%>
+    <form id="addCartItem" method="post"></form>
     <tags:viewedProducts viewedProducts="${viewedProducts}"/>
 </tags:master>

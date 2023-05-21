@@ -39,14 +39,12 @@ public class ProductDetailsPageServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, ProductNotFoundException {
         Long id = parseProductId(req);
         Product product = productDao.getProduct(id);
-        Cart cart = cartService.getCart(req);
         List<ViewedProductDto> viewedProducts
                 = viewedProductsService.getViewedProducts(req);
         viewedProducts = viewedProductsService.addViewedProduct(viewedProducts, product);
 
         req.getSession().setAttribute("viewedProducts", viewedProducts);
         req.setAttribute("product", product);
-        req.setAttribute("cart", cart);
 
         req.getRequestDispatcher("/WEB-INF/pages/productDetails.jsp").forward(req, resp);
     }

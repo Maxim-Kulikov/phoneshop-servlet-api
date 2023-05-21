@@ -21,6 +21,7 @@
   <servlet-mapping>
     <servlet-name>productList</servlet-name>
     <url-pattern>/products</url-pattern>
+    <url-pattern>/products/addToCart</url-pattern>
   </servlet-mapping>
 
   <servlet>
@@ -41,6 +42,36 @@
   <servlet-mapping>
     <servlet-name>priceHistory</servlet-name>
     <url-pattern>/products/price-history/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>cart</servlet-name>
+    <servlet-class>com.es.phoneshop.web.CartPageServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>cart</servlet-name>
+    <url-pattern>/cart</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>miniCart</servlet-name>
+    <servlet-class>com.es.phoneshop.web.MiniCartServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>miniCart</servlet-name>
+    <url-pattern>/cart/miniCart</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>deleteCartItem</servlet-name>
+    <servlet-class>com.es.phoneshop.web.DeleteCartItemServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>deleteCartItem</servlet-name>
+    <url-pattern>/cart/deleteCartItem/*</url-pattern>
   </servlet-mapping>
 
 

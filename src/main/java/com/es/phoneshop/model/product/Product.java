@@ -2,12 +2,13 @@ package com.es.phoneshop.model.product;
 
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
 @EqualsAndHashCode
-public class Product {
+public class Product implements Serializable {
     @EqualsAndHashCode.Exclude
     private Long id;
     private String code;
