@@ -1,6 +1,10 @@
 package com.es.phoneshop.model.product;
 
 import com.es.phoneshop.exception.ProductNotFoundException;
+import com.es.phoneshop.model.sortenum.SortField;
+import com.es.phoneshop.model.sortenum.SortOrder;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -10,22 +14,27 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.*;
 
 public class ArrayListProductDaoTest {
-    private ProductDao productDao;
     private Product productToSave;
-    private Currency usd = Currency.getInstance("USD");
+    private Currency usd;
     private List<Product> sampleProducts;
+    private ProductDao productDao;
 
-    public ArrayListProductDaoTest() {
-        productDao = ArrayListProductDao.INSTANCE;
+    @Before
+    public void initProductDaoProducts() {
         productToSave = new Product("test", "test", new BigDecimal(150), usd, 40, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg");
         sampleProducts = new ArrayList<>();
-
+        usd = Currency.getInstance("USD");
         sampleProducts.add(new Product("slls", "new", new BigDecimal(70), usd, 5, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg"));
         sampleProducts.add(new Product("mxmv", "kdk", new BigDecimal(60), usd, -3, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg"));
         sampleProducts.add(new Product("oddl", "oowow", new BigDecimal(120), usd, 7, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg"));
         sampleProducts.add(new Product("oeppe", "kkel", new BigDecimal(40), usd, 9, "https://raw.githubusercontent.com/andrewosipenko/phoneshop-ext-images/master/manufacturer/Siemens/Siemens%20SXG75.jpg"));
+        productDao = ArrayListProductDao.INSTANCE;
+        initProductDaoProducts(productDao);
+    }
 
-        setSampleProductsInDao();
+    @After
+    public void clearProductDaoProducts() {
+        productDao.deleteAll();
     }
 
     @Test(expected = ProductNotFoundException.class)
@@ -134,12 +143,6 @@ public class ArrayListProductDaoTest {
         assertEquals(result, expected);
     }
 
-    private void setSampleProductsInDao() {
-        for (Product product : sampleProducts) {
-            productDao.save(product);
-        }
-    }
-
     private List<Product> getAscPriceSortedList() {
         return sampleProducts.stream()
                 .sorted(new Comparator<Product>() {
@@ -157,12 +160,18 @@ public class ArrayListProductDaoTest {
                     public int compare(Product o1, Product o2) {
                         return o1.getDescription().compareTo(o2.getDescription());
                     }
-                }).toList();
+                }).collect(Collectors.toList());
     }
 
     private List<Product> getFilteredList(List<Product> products) {
         return products.stream()
                 .filter(product -> product.getPrice() != null && product.getStock() > 0)
                 .collect(Collectors.toList());
+    }
+
+    private void initProductDaoProducts(ProductDao productDao) {
+        for (Product product : sampleProducts) {
+            productDao.save(product);
+        }
     }
 }

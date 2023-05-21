@@ -1,6 +1,8 @@
 package com.es.phoneshop.model.product;
 
 import com.es.phoneshop.exception.ProductNotFoundException;
+import com.es.phoneshop.model.sortenum.SortField;
+import com.es.phoneshop.model.sortenum.SortOrder;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.*;
@@ -14,7 +16,7 @@ public enum ArrayListProductDao implements ProductDao {
     INSTANCE;
 
     private Long productId;
-    private final List<Product> products;
+    private List<Product> products;
     private final Lock readLock;
     private final Lock writeLock;
     private final Comparator<Product> ascPriceComparator;
@@ -188,6 +190,12 @@ public enum ArrayListProductDao implements ProductDao {
         } finally {
             writeLock.unlock();
         }
+    }
+
+    @Override
+    public void deleteAll() {
+        productId = 1L;
+        products.clear();
     }
 
     private record PriceComparator(SortOrder sortOrder) implements Comparator<Product> {

@@ -32,16 +32,35 @@
                 </td>
                 <td>
                     <a href="${pageContext.servletContext.contextPath}/products/${product.id}">
-                        ${product.description}
+                            ${product.description}
                 </td>
                 <td class="price">
                     <a href="${pageContext.servletContext.contextPath}/products/price-history?id=${product.id}">
-                    <fmt:formatNumber value="${product.price}"
-                                      type="currency"
-                                      currencySymbol="${product.currency.symbol}"
-                    />
+                            <fmt:formatNumber value="${product.price}"
+                                              type="currency"
+                                              currencySymbol="${product.currency.symbol}"
+                            />
                 </td>
             </tr>
         </c:forEach>
     </table>
+<%--    <c:if test="${not empty viewedProducts}">--%>
+<%--        <h3>Recently viewed</h3>--%>
+<%--    </c:if>--%>
+<%--    <table >--%>
+<%--        <c:forEach var="viewedProduct" items="${viewedProducts}">--%>
+<%--            <td>--%>
+<%--                <img class="product-tile" src="${viewedProduct.imageUrl}">--%>
+<%--                <p></p>--%>
+<%--                <a href="${pageContext.servletContext.contextPath}/products/${viewedProduct.id}">--%>
+<%--                        ${viewedProduct.description}--%>
+<%--                </a>--%>
+<%--                    <p><fmt:formatNumber value="${viewedProduct.price}"--%>
+<%--                                         type="currency"--%>
+<%--                                         currencySymbol="${viewedProduct.currency.symbol}"></fmt:formatNumber>--%>
+<%--                    </p>--%>
+<%--            </td>--%>
+<%--        </c:forEach>--%>
+<%--    </table>--%>
+    <tags:viewedProducts viewedProducts="${viewedProducts}"/>
 </tags:master>

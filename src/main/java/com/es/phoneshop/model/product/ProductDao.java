@@ -1,6 +1,8 @@
 package com.es.phoneshop.model.product;
 
 import com.es.phoneshop.exception.ProductNotFoundException;
+import com.es.phoneshop.model.sortenum.SortField;
+import com.es.phoneshop.model.sortenum.SortOrder;
 
 import java.util.List;
 
@@ -12,4 +14,6 @@ public interface ProductDao {
     void save(Product product);
 
     void delete(Long id);
+
+    void deleteAll();
 }
