@@ -4,6 +4,8 @@ import com.es.phoneshop.dto.ViewedProductDto;
 import com.es.phoneshop.mapper.ProductMapper;
 import com.es.phoneshop.mapper.impl.ProductMapperImpl;
 import com.es.phoneshop.model.product.Product;
+import com.es.phoneshop.service.ViewedProductsService;
+import com.es.phoneshop.service.impl.ViewedProductsServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.junit.Before;

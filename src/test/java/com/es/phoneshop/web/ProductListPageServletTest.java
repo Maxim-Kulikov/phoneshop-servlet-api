@@ -1,6 +1,6 @@
 package com.es.phoneshop.web;
 
-import com.es.phoneshop.model.product.viewed.ViewedProductsServiceImpl;
+import com.es.phoneshop.service.impl.ViewedProductsServiceImpl;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;

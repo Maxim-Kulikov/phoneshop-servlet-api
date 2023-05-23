@@ -4,13 +4,13 @@ import com.es.phoneshop.dto.ViewedProductDto;
 import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.exception.ProductNotFoundException;
 import com.es.phoneshop.model.cart.Cart;
-import com.es.phoneshop.model.cart.CartService;
-import com.es.phoneshop.model.cart.DefaultCartService;
-import com.es.phoneshop.model.product.ArrayListProductDao;
+import com.es.phoneshop.service.CartService;
+import com.es.phoneshop.service.impl.DefaultCartService;
+import com.es.phoneshop.repository.impl.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
-import com.es.phoneshop.model.product.viewed.ViewedProductsService;
-import com.es.phoneshop.model.product.viewed.ViewedProductsServiceImpl;
+import com.es.phoneshop.repository.ProductDao;
+import com.es.phoneshop.service.ViewedProductsService;
+import com.es.phoneshop.service.impl.ViewedProductsServiceImpl;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -30,7 +30,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        this.productDao = ArrayListProductDao.INSTANCE;
+        this.productDao = ArrayListProductDao.instance();
         this.cartService = DefaultCartService.INSTANCE;
         this.viewedProductsService = ViewedProductsServiceImpl.INSTANCE;
     }
@@ -38,7 +38,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, ProductNotFoundException {
         Long id = parseProductId(req);
-        Product product = productDao.getProduct(id);
+        Product product = productDao.get(id);
         List<ViewedProductDto> viewedProducts
                 = viewedProductsService.getViewedProducts(req);
         viewedProducts = viewedProductsService.addViewedProduct(viewedProducts, product);

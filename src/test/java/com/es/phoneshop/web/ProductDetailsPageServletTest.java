@@ -2,10 +2,10 @@ package com.es.phoneshop.web;
 
 import com.es.phoneshop.dto.ViewedProductDto;
 import com.es.phoneshop.exception.ProductNotFoundException;
-import com.es.phoneshop.model.cart.CartService;
+import com.es.phoneshop.service.CartService;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
-import com.es.phoneshop.model.product.viewed.ViewedProductsService;
+import com.es.phoneshop.repository.ProductDao;
+import com.es.phoneshop.service.ViewedProductsService;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -52,7 +52,7 @@ public class ProductDetailsPageServletTest{
     public void init(){
         when(request.getSession()).thenReturn(session);
         when(request.getPathInfo()).thenReturn("/1");
-        when(productDao.getProduct(anyLong())).thenReturn(new Product());
+        when(productDao.get(anyLong())).thenReturn(new Product());
         when(cartService.getCart(request)).thenReturn(any());
         when(viewedProductsService.getViewedProducts(request)).thenReturn(new ArrayList<ViewedProductDto>());
         when(viewedProductsService.addViewedProduct(any(), any())).thenReturn(new ArrayList<ViewedProductDto>());

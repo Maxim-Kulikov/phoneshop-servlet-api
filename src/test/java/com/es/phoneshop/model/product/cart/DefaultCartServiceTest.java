@@ -1,10 +1,10 @@
 package com.es.phoneshop.model.product.cart;
 
 import com.es.phoneshop.model.cart.Cart;
-import com.es.phoneshop.model.cart.CartService;
-import com.es.phoneshop.model.cart.DefaultCartService;
+import com.es.phoneshop.service.CartService;
+import com.es.phoneshop.service.impl.DefaultCartService;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.repository.ProductDao;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.junit.Before;

@@ -3,12 +3,12 @@ package com.es.phoneshop.web;
 import com.es.phoneshop.dto.ViewedProductDto;
 import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.model.cart.Cart;
-import com.es.phoneshop.model.cart.CartService;
-import com.es.phoneshop.model.cart.DefaultCartService;
-import com.es.phoneshop.model.product.ArrayListProductDao;
-import com.es.phoneshop.model.product.ProductDao;
-import com.es.phoneshop.model.product.viewed.ViewedProductsService;
-import com.es.phoneshop.model.product.viewed.ViewedProductsServiceImpl;
+import com.es.phoneshop.service.CartService;
+import com.es.phoneshop.service.impl.DefaultCartService;
+import com.es.phoneshop.repository.impl.ArrayListProductDao;
+import com.es.phoneshop.repository.ProductDao;
+import com.es.phoneshop.service.ViewedProductsService;
+import com.es.phoneshop.service.impl.ViewedProductsServiceImpl;
 import com.es.phoneshop.model.sortenum.SortField;
 import com.es.phoneshop.model.sortenum.SortOrder;
 import jakarta.servlet.ServletConfig;
@@ -31,7 +31,7 @@ public class ProductListPageServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        productDao = ArrayListProductDao.INSTANCE;
+        productDao = ArrayListProductDao.instance();
         viewedProductsService = ViewedProductsServiceImpl.INSTANCE;
         cartService = DefaultCartService.INSTANCE;
     }
