@@ -11,22 +11,16 @@ public class DosFilter implements Filter {
     private DosProtectionService dosProtectionService;
 
     @Override
-    public void init(FilterConfig filterConfig){
+    public void init(FilterConfig filterConfig) {
         dosProtectionService = DosProtectionServiceImpl.INSTANCE;
     }
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain filterChain) throws ServletException, IOException {
-        if(dosProtectionService.isAllowed(req.getRemoteAddr())){
+        if (dosProtectionService.isAllowed(req.getRemoteAddr())) {
             filterChain.doFilter(req, resp);
-        }
-        else {
+        } else {
             ((HttpServletResponse) resp).setStatus(429);
         }
-    }
-
-    @Override
-    public void destroy() {
-
     }
 }

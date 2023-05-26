@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class DeleteCartItemServlet extends HttpServlet {
-    protected static final String CART_JSP = "/WEB-INF/pages/cart.jsp";
     private CartService cartService;
 
     @Override

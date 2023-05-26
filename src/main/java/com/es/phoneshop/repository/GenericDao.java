@@ -5,8 +5,7 @@ import com.es.phoneshop.exception.ProductNotFoundException;
 import com.es.phoneshop.model.IdOwner;
 import com.es.phoneshop.model.order.Order;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.repository.impl.ArrayListProductDao;
-import com.es.phoneshop.repository.impl.OrderDaoImpl;
+import com.es.phoneshop.repository.impl.DefaultOrderDao;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,7 @@ public abstract class GenericDao<T extends IdOwner> {
     private Lock readLock = readWriteLock.readLock();
     private Lock writeLock = readWriteLock.writeLock();
 
-    public void save(T t){
+    public void save(T t) {
         if (t == null) {
             throw new RuntimeException(t.getClass().getSimpleName() + " is null");
         }
@@ -38,10 +37,10 @@ public abstract class GenericDao<T extends IdOwner> {
             if (optional.isEmpty()) {
                 saveToList(t);
             } else {
-                if(t.getClass() == Order.class) {
+                if (t.getClass() == Order.class) {
                     updateOrder((Order) optional.get(), (Order) t);
                 }
-                if(t.getClass() == Product.class){
+                if (t.getClass() == Product.class) {
                     updateProduct((Product) optional.get(), (Product) t);
                 }
             }
@@ -50,12 +49,12 @@ public abstract class GenericDao<T extends IdOwner> {
         }
     }
 
-    public T get(Long id){
+    public T get(Long id) {
         try {
             readLock.lock();
             return getOptional(id)
-                    .orElseThrow(()->getException(id));
-        }finally {
+                    .orElseThrow(() -> getException(id));
+        } finally {
             readLock.unlock();
         }
     }
@@ -79,11 +78,11 @@ public abstract class GenericDao<T extends IdOwner> {
         list.clear();
     }
 
-    public List<T> getAll(){
+    public List<T> getAll() {
         return list;
     }
 
-    public Long getId(){
+    public Long getId() {
         return index;
     }
 
@@ -92,16 +91,14 @@ public abstract class GenericDao<T extends IdOwner> {
         list.add(t);
     }
 
-    private RuntimeException getException(Long id){
-        String name = this.getClass().getName();
-        if(name == OrderDaoImpl.class.getSimpleName()){
+    private RuntimeException getException(Long id) {
+        String name = this.getClass().getSimpleName();
+        if (name.equals(DefaultOrderDao.class.getSimpleName())) {
             return new OrderNotFoundException(id.toString());
-        }
-        if(name == ArrayListProductDao.class.getSimpleName()){
-            return new ProductNotFoundException(id.toString());
         }
         return new ProductNotFoundException(id.toString());
     }
+
     /**
      * this method uses inner class and replaces old values of existed product with new
      */
@@ -127,7 +124,7 @@ public abstract class GenericDao<T extends IdOwner> {
                 .stock(updated.getStock());
     }
 
-    private Optional<T> getOptional(Long id){
+    private Optional<T> getOptional(Long id) {
         return list.stream()
                 .filter(t -> t.getId().equals(id))
                 .findAny();

@@ -2,18 +2,17 @@ package com.es.phoneshop.repository.impl;
 
 import com.es.phoneshop.exception.OrderNotFoundException;
 import com.es.phoneshop.model.order.Order;
-import com.es.phoneshop.repository.GenericDao;
 import com.es.phoneshop.repository.OrderDao;
 
-public final class OrderDaoImpl extends GenericDao<Order> implements OrderDao {
-    private static OrderDaoImpl instance;
+public final class DefaultOrderDao extends OrderDao {
+    private static DefaultOrderDao instance;
 
-    private OrderDaoImpl(){
+    private DefaultOrderDao(){
     }
 
-    public static OrderDaoImpl instance(){
+    public static DefaultOrderDao instance(){
         if(instance == null){
-            instance = new OrderDaoImpl();
+            instance = new DefaultOrderDao();
         }
         return instance;
     }

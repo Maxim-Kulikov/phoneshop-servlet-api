@@ -1,10 +1,10 @@
-package com.es.phoneshop.model.product;
+package com.es.phoneshop.repository;
 
 import com.es.phoneshop.exception.ProductNotFoundException;
+import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.sortenum.SortField;
 import com.es.phoneshop.model.sortenum.SortOrder;
 import com.es.phoneshop.repository.impl.ArrayListProductDao;
-import com.es.phoneshop.repository.ProductDao;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

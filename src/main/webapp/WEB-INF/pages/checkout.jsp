@@ -80,7 +80,7 @@
             <tags:orderFormRaw name="firstName" order="${order}" label="First name" errors="${errors}"/>
             <tags:orderFormRaw name="lastName" order="${order}" label="Last name" errors="${errors}"/>
             <tags:orderFormRaw name="phone" order="${order}" label="Phone" errors="${errors}"/>
-            <tags:orderFormRaw name="deliveryDate" order="${order}" label="Delivery date" errors="${errors}"/>
+            <tags:orderFormRaw placeHolder="dd.mm.yyyy" name="deliveryDate" order="${order}" label="Delivery date" errors="${errors}"/>
             <tags:orderFormRaw name="deliveryAddress" order="${order}" label="Delivery address" errors="${errors}"/>
             <tr>
                 <td>Payment method<span style="color:red">*</span></td>

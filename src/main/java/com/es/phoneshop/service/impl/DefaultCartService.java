@@ -1,11 +1,12 @@
 package com.es.phoneshop.service.impl;
 
 import com.es.phoneshop.exception.OutOfStockException;
+import com.es.phoneshop.exception.ProductNotFoundException;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartItem;
-import com.es.phoneshop.repository.impl.ArrayListProductDao;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.repository.ProductDao;
+import com.es.phoneshop.repository.impl.ArrayListProductDao;
 import com.es.phoneshop.service.CartService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -22,13 +23,11 @@ public enum DefaultCartService implements CartService {
 
     private static final String CART_SESSION_ATTRIBUTE = "cart";
     private ProductDao productDao;
-    private final Lock readLock;
     private final Lock writeLock;
 
     DefaultCartService() {
         productDao = ArrayListProductDao.instance();
         ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-        readLock = readWriteLock.readLock();
         writeLock = readWriteLock.writeLock();
     }
 
@@ -66,7 +65,9 @@ public enum DefaultCartService implements CartService {
             Product product = productDao.get(productId);
 
             if (product.getStock() >= quantity) {
-                getOptionalOfCartItem(cart, productId).get().setQuantity(quantity);
+                getOptionalOfCartItem(cart, productId)
+                        .orElseThrow(() -> new ProductNotFoundException(productId.toString()))
+                        .setQuantity(quantity);
             } else {
                 throw new OutOfStockException(product, quantity, product.getStock());
             }

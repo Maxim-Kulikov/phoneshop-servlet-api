@@ -3,7 +3,6 @@ package com.es.phoneshop.repository.impl;
 import com.es.phoneshop.model.product.Product;
 import com.es.phoneshop.model.sortenum.SortField;
 import com.es.phoneshop.model.sortenum.SortOrder;
-import com.es.phoneshop.repository.GenericDao;
 import com.es.phoneshop.repository.ProductDao;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -16,12 +15,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class ArrayListProductDao extends GenericDao<Product> implements ProductDao {
+public final class ArrayListProductDao extends ProductDao {
     private static ArrayListProductDao instance;
-    private Long productId;
-    private List<Product> products;
+    private final List<Product> products;
     private final Lock readLock;
-    private final Lock writeLock;
     private final Comparator<Product> ascPriceComparator;
     private final Comparator<Product> descPriceComparator;
     private final Comparator<Product> ascDescriptionComparator;
@@ -35,11 +32,9 @@ public final class ArrayListProductDao extends GenericDao<Product> implements Pr
     }
 
     private ArrayListProductDao() {
-        this.productId = getId();
         products = getAll();
         ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
         readLock = readWriteLock.readLock();
-        writeLock = readWriteLock.writeLock();
         ascPriceComparator = new PriceComparator(SortOrder.asc);
         descPriceComparator = new PriceComparator(SortOrder.desc);
         ascDescriptionComparator = new DescriptionComparator(SortOrder.asc);

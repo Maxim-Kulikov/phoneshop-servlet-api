@@ -5,7 +5,7 @@ import com.es.phoneshop.model.cart.CartItem;
 import com.es.phoneshop.model.order.Order;
 import com.es.phoneshop.model.order.PaymentMethod;
 import com.es.phoneshop.repository.OrderDao;
-import com.es.phoneshop.repository.impl.OrderDaoImpl;
+import com.es.phoneshop.repository.impl.DefaultOrderDao;
 import com.es.phoneshop.service.OrderService;
 
 import java.math.BigDecimal;
@@ -25,7 +25,7 @@ public enum OrderServiceImpl implements OrderService {
     private final Lock writeLock;
 
     OrderServiceImpl(){
-        orderDao = OrderDaoImpl.instance();
+        orderDao = DefaultOrderDao.instance();
         ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
         readLock = readWriteLock.readLock();
         writeLock = readWriteLock.writeLock();

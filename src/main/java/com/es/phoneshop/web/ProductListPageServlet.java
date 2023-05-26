@@ -52,7 +52,6 @@ public class ProductListPageServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int quantity = 0;
         Long productId = Long.parseLong(req.getParameter("productId"));
-        Cart cart = cartService.getCart(req);
 
         try {
             quantity = getQuantityIfValid(req);
@@ -63,6 +62,7 @@ public class ProductListPageServlet extends HttpServlet {
         }
 
         try {
+            Cart cart = cartService.getCart(req);
             cartService.add(cart, productId, quantity);
         } catch (OutOfStockException e) {
             req.setAttribute("error", "Out of stock, available " + e.getStockAvailable() + ", but requested " + e.getStockRequested());
