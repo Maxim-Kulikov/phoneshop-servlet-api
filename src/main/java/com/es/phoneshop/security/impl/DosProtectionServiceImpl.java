@@ -23,6 +23,7 @@ public enum DosProtectionServiceImpl implements DosProtectionService {
         if (info == null) {
             info = new Info();
             info.quantity = 1L;
+            info.startTime = LocalDateTime.now();
             countMap.put(ip, info);
         }
 
@@ -38,9 +39,12 @@ public enum DosProtectionServiceImpl implements DosProtectionService {
     }
 
     private boolean reset(Info info) {
-        if (abs(ChronoUnit.SECONDS.between(LocalDateTime.now(), info.blockedTime)) >= resetTimeSeconds) {
+        LocalDateTime now = LocalDateTime.now();
+        if (abs(ChronoUnit.SECONDS.between(now, info.blockedTime)) >= resetTimeSeconds
+                || abs(ChronoUnit.SECONDS.between(now, info.startTime)) >= 60) {
             info.quantity = 1L;
             info.blockedTime = null;
+            info.startTime = now;
             return true;
         }
         return false;
@@ -48,6 +52,7 @@ public enum DosProtectionServiceImpl implements DosProtectionService {
 
     private static class Info {
         Long quantity;
+        LocalDateTime startTime;
         LocalDateTime blockedTime;
     }
 }

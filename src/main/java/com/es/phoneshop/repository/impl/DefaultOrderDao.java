@@ -7,11 +7,11 @@ import com.es.phoneshop.repository.OrderDao;
 public final class DefaultOrderDao extends OrderDao {
     private static DefaultOrderDao instance;
 
-    private DefaultOrderDao(){
+    private DefaultOrderDao() {
     }
 
-    public static DefaultOrderDao instance(){
-        if(instance == null){
+    public static DefaultOrderDao instance() {
+        if (instance == null) {
             instance = new DefaultOrderDao();
         }
         return instance;

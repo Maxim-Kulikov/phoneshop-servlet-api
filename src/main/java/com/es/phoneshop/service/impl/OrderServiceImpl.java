@@ -24,7 +24,7 @@ public enum OrderServiceImpl implements OrderService {
     private final Lock readLock;
     private final Lock writeLock;
 
-    OrderServiceImpl(){
+    OrderServiceImpl() {
         orderDao = DefaultOrderDao.instance();
         ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
         readLock = readWriteLock.readLock();
@@ -56,11 +56,11 @@ public enum OrderServiceImpl implements OrderService {
 
     @Override
     public void placeOrder(Order order) {
-        try{
+        try {
             writeLock.lock();
             order.setSecureId(UUID.randomUUID().toString());
             orderDao.save(order);
-        }finally{
+        } finally {
             writeLock.unlock();
         }
     }
@@ -75,7 +75,7 @@ public enum OrderServiceImpl implements OrderService {
         return orderDao.get(secureId);
     }
 
-    private BigDecimal calculateDeliveryCost(){
+    private BigDecimal calculateDeliveryCost() {
         return new BigDecimal(5);
     }
 }

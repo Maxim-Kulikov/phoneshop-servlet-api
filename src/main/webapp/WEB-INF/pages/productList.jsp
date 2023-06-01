@@ -48,9 +48,9 @@
                                     ${error}
                             </div>
                         </c:if>
-                        <c:if test="${not empty message and (param.productId eq product.id)}">
+                        <c:if test="${not empty param.message and (param.productId eq product.id)}">
                             <div class="success">
-                                    ${message}
+                                    ${param.message}
                             </div>
                         </c:if>
                         <input name="productId" value="${product.id}" type="hidden"/>

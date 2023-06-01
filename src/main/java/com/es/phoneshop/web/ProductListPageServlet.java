@@ -70,8 +70,9 @@ public class ProductListPageServlet extends HttpServlet {
             return;
         }
 
-        req.setAttribute("message", "Product was added successfully");
-        doGet(req, resp);
+        /*req.setAttribute("message", "Product was added successfully");
+        doGet(req, resp);*/
+        resp.sendRedirect(req.getContextPath() + "/products?productId=" + productId + "&message=Product was added successfully");
     }
 
     private List<ViewedProductDto> viewedProducts(HttpServletRequest req) {

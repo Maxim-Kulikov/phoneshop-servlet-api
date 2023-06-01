@@ -22,7 +22,7 @@ public class CartItem implements Serializable, Cloneable {
     }
 
     @Override
-    public CartItem clone(){
+    public CartItem clone() {
         try {
             return (CartItem) super.clone();
         } catch (CloneNotSupportedException e) {

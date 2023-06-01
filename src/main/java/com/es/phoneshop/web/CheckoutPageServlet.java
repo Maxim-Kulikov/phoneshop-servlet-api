@@ -116,7 +116,8 @@ public class CheckoutPageServlet extends HttpServlet {
 
         try {
             Date date = format.parse(param);
-            if (new Date().after(date)) {
+            Date now = new Date();
+            if (now.after(date)) {
                 errors.put("deliveryDate", "Nearest delivery on the next day");
                 return;
             }
