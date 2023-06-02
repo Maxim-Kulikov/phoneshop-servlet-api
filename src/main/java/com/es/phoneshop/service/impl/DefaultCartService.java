@@ -94,7 +94,7 @@ public enum DefaultCartService implements CartService {
         try {
             writeLock.lock();
             cart.getItems().clear();
-            cart.setTotalCost(null);
+            cart.setTotalCost(new BigDecimal(0));
             cart.setTotalQuantity(0);
         } finally {
             writeLock.unlock();

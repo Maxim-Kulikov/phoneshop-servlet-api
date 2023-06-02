@@ -129,7 +129,7 @@ public class DefaultCartServiceTest {
 
         cartService.clear(cart);
         assertTrue(cart.getItems().isEmpty());
-        assertNull(cart.getTotalCost());
+        assertEquals(new BigDecimal(0), cart.getTotalCost());
         assertEquals(0, cart.getTotalQuantity());
     }
 

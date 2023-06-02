@@ -37,7 +37,7 @@
                             ${product.description}
                 </td>
                 <td class="quantity">
-                    <form id="addCartItem${product.id}" action="${pageContext.servletContext.contextPath}/products"
+                    <form id="addCartItem/${product.id}" action="${pageContext.servletContext.contextPath}/products"
                           method="post">
                         <fmt:formatNumber value="1" var="quantity"/>
                         <input name="quantity"
@@ -64,7 +64,7 @@
                             />
                 </td>
                 <td>
-                    <button form="addCartItem${product.id}">
+                    <button form="addCartItem/${product.id}">
                         Add to cart
                     </button>
                 </td>

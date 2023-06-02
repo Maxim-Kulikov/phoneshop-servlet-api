@@ -4,6 +4,7 @@ import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.service.CartService;
 import com.es.phoneshop.service.impl.DefaultCartService;
+import com.es.phoneshop.util.Validation;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -11,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Locale;
@@ -41,12 +41,11 @@ public class CartPageServlet extends HttpServlet {
         Locale locale = request.getLocale();
         Cart cart = cartService.getCart(request);
 
-        for (int i = 0; i < productIds.length; i++) {
+        for (int i = 0, quantity; i < productIds.length; i++) {
             Long productId = null;
-            int quantity;
             try {
                 productId = Long.parseLong(productIds[i]);
-                quantity = getQuantityIfValid(quantities[i], locale);
+                quantity = Validation.getQuantityIfValid(quantities[i], locale);
                 cartService.update(cart, productId, quantity);
             } catch (OutOfStockException e) {
                 errors.put(productId,
@@ -61,17 +60,6 @@ public class CartPageServlet extends HttpServlet {
             request.setAttribute("errors", errors);
             doGet(request, response);
         }
-    }
-
-    private int getQuantityIfValid(String quantityStr, Locale locale) throws ParseException {
-        int quantity = Integer.parseInt(quantityStr);
-        NumberFormat format = NumberFormat.getInstance(locale);
-        quantity = format.parse(Integer.toString(quantity)).intValue();
-        if (quantity < 1) {
-            throw new NumberFormatException();
-        }
-
-        return quantity;
     }
 
 }
