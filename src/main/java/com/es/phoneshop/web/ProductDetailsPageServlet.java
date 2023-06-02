@@ -11,7 +11,7 @@ import com.es.phoneshop.service.CartService;
 import com.es.phoneshop.service.ViewedProductsService;
 import com.es.phoneshop.service.impl.DefaultCartService;
 import com.es.phoneshop.service.impl.ViewedProductsServiceImpl;
-import com.es.phoneshop.util.Validation;
+import com.es.phoneshop.util.NumberValidator;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -37,7 +37,7 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, ProductNotFoundException {
-        Long id = Validation.parseProductId(req);
+        Long id = NumberValidator.parseProductId(req);
         Product product = productDao.get(id);
         List<ViewedProductDto> viewedProducts
                 = viewedProductsService.getViewedProducts(req);
@@ -51,11 +51,11 @@ public class ProductDetailsPageServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Long productId = Validation.parseProductId(req);
+        Long productId = NumberValidator.parseProductId(req);
 
         int quantity = 0;
         try {
-            quantity = Validation.getQuantityIfValid(req);
+            quantity = NumberValidator.getQuantityIfValid(req);
         } catch (ParseException | NumberFormatException e) {
             req.setAttribute("error", "Incorrect number");
             doGet(req, resp);

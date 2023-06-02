@@ -11,7 +11,7 @@ import com.es.phoneshop.service.CartService;
 import com.es.phoneshop.service.ViewedProductsService;
 import com.es.phoneshop.service.impl.DefaultCartService;
 import com.es.phoneshop.service.impl.ViewedProductsServiceImpl;
-import com.es.phoneshop.util.Validation;
+import com.es.phoneshop.util.NumberValidator;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -54,7 +54,7 @@ public class ProductListPageServlet extends HttpServlet {
         Long productId = Long.parseLong(req.getParameter("productId"));
 
         try {
-            quantity = Validation.getQuantityIfValid(req);
+            quantity = NumberValidator.getQuantityIfValid(req);
         } catch (ParseException | NumberFormatException e) {
             req.setAttribute("error", "Incorrect number");
             doGet(req, resp);

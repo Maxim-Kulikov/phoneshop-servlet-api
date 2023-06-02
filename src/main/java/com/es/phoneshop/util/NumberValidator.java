@@ -6,7 +6,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
 
-public final class Validation {
+public final class NumberValidator {
     public static int getQuantityIfValid(HttpServletRequest request) throws ParseException {
         String quantityStr = request.getParameter("quantity");
         Locale locale = request.getLocale();
@@ -15,7 +15,10 @@ public final class Validation {
     }
 
     public static int getQuantityIfValid(String quantityStr, Locale locale) throws ParseException {
-        Integer.parseInt(quantityStr);
+        if (Double.parseDouble(quantityStr) % 1 != 0) {
+            throw new NumberFormatException();
+        }
+
         NumberFormat format = NumberFormat.getInstance(locale);
         int quantity = format.parse(quantityStr).intValue();
         if (quantity < 1) {

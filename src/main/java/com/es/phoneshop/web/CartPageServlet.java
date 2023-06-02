@@ -4,7 +4,7 @@ import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.service.CartService;
 import com.es.phoneshop.service.impl.DefaultCartService;
-import com.es.phoneshop.util.Validation;
+import com.es.phoneshop.util.NumberValidator;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -45,7 +45,7 @@ public class CartPageServlet extends HttpServlet {
             Long productId = null;
             try {
                 productId = Long.parseLong(productIds[i]);
-                quantity = Validation.getQuantityIfValid(quantities[i], locale);
+                quantity = NumberValidator.getQuantityIfValid(quantities[i], locale);
                 cartService.update(cart, productId, quantity);
             } catch (OutOfStockException e) {
                 errors.put(productId,
