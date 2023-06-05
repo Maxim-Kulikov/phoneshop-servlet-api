@@ -1,5 +1,6 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.model.IdOwner;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
@@ -8,7 +9,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 @EqualsAndHashCode
-public class Product implements Serializable {
+public class Product implements Serializable, IdOwner {
     @EqualsAndHashCode.Exclude
     private Long id;
     private String code;

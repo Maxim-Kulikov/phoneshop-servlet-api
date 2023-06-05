@@ -37,24 +37,24 @@
                             ${product.description}
                 </td>
                 <td class="quantity">
-                    <input
-                            form="addCartItem"
-                            name="quantity"
-                            type="text"
-                            value="${not empty error and (param.productId eq product.id) ? param.quantity : 1}"
-                            class="quantity"
-
-                    />
-                    <c:if test="${not empty error and (param.productId eq product.id)}">
-                        <div class="error">
-                                ${error}
-                        </div>
-                    </c:if>
-                    <c:if test="${not empty message and (param.productId eq product.id)}">
-                        <div class="success">
-                                ${message}
-                        </div>
-                    </c:if>
+                    <form id="addCartItem/${product.id}" action="${pageContext.servletContext.contextPath}/products"
+                          method="post">
+                        <fmt:formatNumber value="1" var="quantity"/>
+                        <input name="quantity"
+                               value="${not empty error and (param.productId eq product.id)? param.quantity : 1}"
+                               class="quantity"/>
+                        <c:if test="${not empty error and (param.productId eq product.id)}">
+                            <div class="error">
+                                    ${error}
+                            </div>
+                        </c:if>
+                        <c:if test="${not empty param.message and (param.productId eq product.id)}">
+                            <div class="success">
+                                    ${param.message}
+                            </div>
+                        </c:if>
+                        <input name="productId" value="${product.id}" type="hidden"/>
+                    </form>
                 </td>
                 <td class="price">
                     <a href="${pageContext.servletContext.contextPath}/products/price-history?id=${product.id}">
@@ -64,8 +64,7 @@
                             />
                 </td>
                 <td>
-                    <button form="addCartItem"
-                            formaction="${pageContext.servletContext.contextPath}/products/addToCart?productId=${product.id}&quantity=1">
+                    <button form="addCartItem/${product.id}">
                         Add to cart
                     </button>
                 </td>
