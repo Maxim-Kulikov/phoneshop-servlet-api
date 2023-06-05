@@ -1,12 +1,11 @@
-package com.es.phoneshop.model.product.cart;
+package com.es.phoneshop.service;
 
 import com.es.phoneshop.exception.OutOfStockException;
 import com.es.phoneshop.model.cart.Cart;
 import com.es.phoneshop.model.cart.CartItem;
-import com.es.phoneshop.model.cart.CartService;
-import com.es.phoneshop.model.cart.DefaultCartService;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.repository.ProductDao;
+import com.es.phoneshop.service.impl.DefaultCartService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.junit.Before;
@@ -21,8 +20,7 @@ import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -35,10 +33,10 @@ public class DefaultCartServiceTest {
     private HttpServletRequest request;
     @Mock
     private HttpSession session;
-    private Currency currency = Currency.getInstance("USD");
-    private List<Product> testProducts;
     @InjectMocks
     private CartService cartService = DefaultCartService.INSTANCE;
+    private Currency currency = Currency.getInstance("USD");
+    private List<Product> testProducts;
     private Cart cart;
 
 
@@ -66,12 +64,14 @@ public class DefaultCartServiceTest {
     public void ifAddInCartThenReturnCartWithAddedProduct() throws OutOfStockException {
         Product testProduct = testProducts.get(0);
 
-        when(productDao.getProduct(anyLong())).thenReturn(testProduct);
+        when(productDao.get(anyLong())).thenReturn(testProduct);
 
         Cart expected = new Cart();
         Cart result = new Cart();
 
-        expected.add(new CartItem(testProduct, 5));
+        expected.getItems().add(new CartItem(testProduct, 5));
+        expected.setTotalQuantity(5);
+        expected.setTotalCost(new BigDecimal(500));
         cartService.add(result, anyLong(), 5);
 
         assertEquals(expected, result);
@@ -82,9 +82,9 @@ public class DefaultCartServiceTest {
         Cart cart = this.cart;
         Product productToAdd = testProducts.get(0);
 
-        when(productDao.getProduct(anyLong())).thenReturn(productToAdd);
+        when(productDao.get(anyLong())).thenReturn(productToAdd);
 
-        cart.add(new CartItem(productToAdd, 5));
+        cart.getItems().add(new CartItem(productToAdd, 5));
         cartService.add(cart, productToAdd.getId(), 6);
     }
 
@@ -93,13 +93,44 @@ public class DefaultCartServiceTest {
         Cart cart = this.cart;
         Product productToAdd = testProducts.get(0);
 
-        when(productDao.getProduct(anyLong())).thenReturn(productToAdd);
+        when(productDao.get(anyLong())).thenReturn(productToAdd);
 
         CartItem cartItem = new CartItem(productToAdd, 5);
-        cart.add(cartItem);
+        cart.getItems().add(cartItem);
         cartService.add(cart, productToAdd.getId(), 4);
 
         assertEquals(9, cartItem.getQuantity());
+    }
+
+    @Test
+    public void checkIfProductsHaveUpdatedQuantityAfterUpdating() throws OutOfStockException {
+        Product testProduct = testProducts.get(0);
+        when(productDao.get(anyLong())).thenReturn(testProduct);
+        cartService.add(cart, testProduct.getId(), 5);
+        cartService.update(cart, testProduct.getId(), 7);
+        assertEquals(7, cart.getItems().get(0).getQuantity());
+    }
+
+    @Test
+    public void checkDeletingOfProduct() {
+        Cart cart = new Cart();
+        cart.getItems().add(new CartItem(testProducts.get(0), 2));
+        cart.getItems().add(new CartItem(testProducts.get(1), 3));
+
+        cartService.delete(cart, 1L);
+        assertFalse(cart.getItems().contains(testProducts.get(0)));
+    }
+
+    @Test
+    public void checkDeletingOfAllProducts() {
+        Cart cart = new Cart();
+        cart.getItems().add(new CartItem(testProducts.get(0), 2));
+        cart.getItems().add(new CartItem(testProducts.get(1), 3));
+
+        cartService.clear(cart);
+        assertTrue(cart.getItems().isEmpty());
+        assertEquals(new BigDecimal(0), cart.getTotalCost());
+        assertEquals(0, cart.getTotalQuantity());
     }
 
     private void initProducts() {
@@ -108,4 +139,5 @@ public class DefaultCartServiceTest {
         testProducts.add(new Product(3L, "f", "n", new BigDecimal(100), currency, 10, "x"));
         testProducts.add(new Product(4L, "p", "b", new BigDecimal(100), currency, 10, "x"));
     }
+
 }

@@ -2,9 +2,8 @@ package com.es.phoneshop.web;
 
 import com.es.phoneshop.exception.ProductNotFoundException;
 import com.es.phoneshop.model.product.Product;
-import com.es.phoneshop.model.product.ProductDao;
+import com.es.phoneshop.repository.ProductDao;
 import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,8 +28,6 @@ public class PriceHistoryPageServletTest {
     @Mock
     private RequestDispatcher requestDispatcher;
     @Mock
-    private ServletConfig config;
-    @Mock
     private ProductDao productDao;
     @InjectMocks
     private PriceHistoryPageServlet servlet = new PriceHistoryPageServlet();
@@ -38,7 +35,7 @@ public class PriceHistoryPageServletTest {
     @Test
     public void testIfDoGetWorksCorrectly() throws ServletException, IOException {
         when(request.getParameter("id")).thenReturn("1");
-        when(productDao.getProduct(1L)).thenReturn(new Product());
+        when(productDao.get(1L)).thenReturn(new Product());
         when(request.getRequestDispatcher(anyString())).thenReturn(requestDispatcher);
 
         servlet.doGet(request, response);
@@ -50,8 +47,8 @@ public class PriceHistoryPageServletTest {
 
     @Test(expected = ProductNotFoundException.class)
     public void testIfIdIncorrectThenThrowException() throws ServletException, IOException {
-        servlet.init(config);
         when(request.getParameter("id")).thenReturn("1");
+        when(productDao.get(anyLong())).thenThrow(ProductNotFoundException.class);
         servlet.doGet(request, response);
     }
 }

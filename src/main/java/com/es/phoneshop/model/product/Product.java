@@ -1,13 +1,15 @@
 package com.es.phoneshop.model.product;
 
+import com.es.phoneshop.model.IdOwner;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
 @EqualsAndHashCode
-public class Product {
+public class Product implements Serializable, IdOwner {
     @EqualsAndHashCode.Exclude
     private Long id;
     private String code;

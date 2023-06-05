@@ -2,28 +2,25 @@ package com.es.phoneshop.model.cart;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @EqualsAndHashCode
 @Getter
-public class Cart {
-    private final List<CartItem> items;
+@Setter
+public class Cart implements Serializable {
+    private List<CartItem> items;
+    private int totalQuantity;
+    private BigDecimal totalCost;
 
     public Cart() {
         items = new ArrayList<>();
-    }
-
-    public void add(CartItem cartItem) {
-        items.add(cartItem);
-    }
-
-    public Optional<CartItem> getOptionalOfCartItem(Long id) {
-        return items.stream()
-                .filter(item -> item.getProduct().getId().equals(id))
-                .findAny();
+        totalQuantity = 0;
+        totalCost = new BigDecimal(0);
     }
 
     @Override

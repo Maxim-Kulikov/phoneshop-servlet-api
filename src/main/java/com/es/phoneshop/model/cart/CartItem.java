@@ -6,11 +6,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode
-public class CartItem {
+public class CartItem implements Serializable, Cloneable {
     private Product product;
     private int quantity = 0;
 
@@ -19,7 +21,12 @@ public class CartItem {
         return product.getCode() + ", " + quantity;
     }
 
-    public void addQuantity(int quantity) {
-        this.quantity += quantity;
+    @Override
+    public CartItem clone() {
+        try {
+            return (CartItem) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
