@@ -2,6 +2,7 @@ package com.es.phoneshop.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
@@ -31,5 +32,17 @@ public final class NumberValidator {
     public static Long parseProductId(HttpServletRequest req) {
         String productInfo = req.getPathInfo().substring(1);
         return Long.valueOf(productInfo);
+    }
+
+    public static BigDecimal getPriceIfValid(String priceStr, Locale locale) throws ParseException {
+        if(priceStr == null || priceStr.isBlank()) {
+            priceStr = "0";
+        }
+        NumberFormat format = NumberFormat.getInstance(locale);
+        BigDecimal price = BigDecimal.valueOf(format.parse(priceStr).doubleValue());
+        if (price.compareTo(BigDecimal.valueOf(0)) < 0) {
+            throw new NumberFormatException();
+        }
+        return price;
     }
 }

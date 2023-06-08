@@ -6,6 +6,7 @@ import com.es.phoneshop.model.sortenum.SortOrder;
 import com.es.phoneshop.repository.ProductDao;
 import org.codehaus.plexus.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -58,6 +59,22 @@ public final class ArrayListProductDao extends ProductDao {
         }
     }
 
+    @Override
+    public List<Product> findProductsByNameAndBetweenPrices(String query, BigDecimal minPrice, BigDecimal maxPrice, Boolean isByAllWords) {
+        try {
+            readLock.lock();
+            Stream<Product> stream = filterByStockAndPriceProducts();
+
+            stream = isByAllWords ? filterByDescriptionByAllWords(stream, query) : filterByDescription(stream, query);
+
+
+            return stream.filter(product -> product.getPrice().compareTo(minPrice) >= 0 && product.getPrice().compareTo(maxPrice) <= 0).
+                    collect(Collectors.toList());
+        } finally {
+            readLock.unlock();
+        }
+    }
+
     private Stream<Product> filterByStockAndPriceProducts() {
         return products.stream()
                 .filter(this::productInStock)
@@ -69,6 +86,19 @@ public final class ArrayListProductDao extends ProductDao {
         return stream
                 .filter(product -> filterDescription(product, queries))
                 .sorted(new RelevanceComparator(queries));
+    }
+
+    private Stream<Product> filterByDescriptionByAllWords(Stream<Product> stream, String query) {
+        String[] queries = split(query);
+        return stream
+                .filter(product -> {
+                    for (String importantWord : queries) {
+                        if (!product.getDescription().contains(importantWord)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                });
     }
 
     private String[] split(String query) {
