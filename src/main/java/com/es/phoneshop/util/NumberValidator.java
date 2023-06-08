@@ -35,9 +35,6 @@ public final class NumberValidator {
     }
 
     public static BigDecimal getPriceIfValid(String priceStr, Locale locale) throws ParseException {
-        if(priceStr == null || priceStr.isBlank()) {
-            priceStr = "0";
-        }
         NumberFormat format = NumberFormat.getInstance(locale);
         BigDecimal price = BigDecimal.valueOf(format.parse(priceStr).doubleValue());
         if (price.compareTo(BigDecimal.valueOf(0)) < 0) {

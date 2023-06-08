@@ -5,31 +5,15 @@
 
 <tags:master pageTitle="Advanced Search">
     <h1>Advanced Search</h1>
-    <form method="get" action="${pageContext.servletContext.contextPath}/advancedSearch">
+    <form method="post" action="${pageContext.servletContext.contextPath}/advancedSearch">
         <table>
-            <tags:advancedSearchRaw name="description" label="Description" errors="${errors}"/>
+            <tags:advancedSearchRaw name="description" label="Description" errors="${errors}" descriptionSearchStrategies="${descriptionSearchStrategies}"/>
             <tags:advancedSearchRaw name="minPrice" label="Min price" errors="${errors}"/>
             <tags:advancedSearchRaw name="maxPrice" label="Max price" errors="${errors}"/>
-            <td>
-                <select name="descriptionSearchStrategy">
-                    <c:if test="${not empty param.descriptionSearchStrategy}">
-                        <option>${param.descriptionSearchStrategy}</option>
-                    </c:if>
-                    <c:set var="error" value="${errors['descriptionSearchStrategy']}"/>
-                    <c:forEach var="method" items="${descriptionSearchStrategies}">
-                        <c:if test="${param.descriptionSearchStrategy != method}">
-                            <option>${method}</option>
-                        </c:if>
-                    </c:forEach>
-                </select>
-                <c:if test="${not empty error}">
-                    <div class="error">
-                            ${error}
-                    </div>
-                </c:if>
-            </td>
         </table>
+        <p></p>
         <button>Search</button>
+        <p></p>
         <tags:foundProducts foundProducts="${foundProducts}"/>
     </form>
 </tags:master>

@@ -48,7 +48,7 @@ public final class ArrayListProductDao extends ProductDao {
             readLock.lock();
             Stream<Product> stream = filterByStockAndPriceProducts();
             if (StringUtils.isNotBlank(query)) {
-                stream = filterByDescription(stream, query);
+                stream = filterDescriptionByAnyWord(stream, query);
             }
             if (sortField != null && sortOrder != null) {
                 stream = sortProducts(stream, sortField, sortOrder);
@@ -63,13 +63,18 @@ public final class ArrayListProductDao extends ProductDao {
     public List<Product> findProductsByNameAndBetweenPrices(String query, BigDecimal minPrice, BigDecimal maxPrice, Boolean isByAllWords) {
         try {
             readLock.lock();
-            Stream<Product> stream = filterByStockAndPriceProducts();
-
-            stream = isByAllWords ? filterByDescriptionByAllWords(stream, query) : filterByDescription(stream, query);
-
-
-            return stream.filter(product -> product.getPrice().compareTo(minPrice) >= 0 && product.getPrice().compareTo(maxPrice) <= 0).
-                    collect(Collectors.toList());
+            Stream<Product> stream = filterByStockAndPriceProducts()
+                    .filter(product -> {
+                        return minPrice == null || product.getPrice().compareTo(minPrice) >= 0;
+                    })
+                    .filter(product -> {
+                        return maxPrice == null || product.getPrice().compareTo(maxPrice) <= 0;
+                    });
+            if (query != null) {
+                stream = isByAllWords ?
+                        filterDescriptionByAllWords(stream, query) : filterDescriptionByAnyWord(stream, query);
+            }
+            return stream.collect(Collectors.toList());
         } finally {
             readLock.unlock();
         }
@@ -81,24 +86,18 @@ public final class ArrayListProductDao extends ProductDao {
                 .filter(this::productPriceNotNull);
     }
 
-    private Stream<Product> filterByDescription(Stream<Product> stream, String query) {
+    private Stream<Product> filterDescriptionByAnyWord(Stream<Product> stream, String query) {
         String[] queries = split(query);
         return stream
-                .filter(product -> filterDescription(product, queries))
+                .filter(product -> filterDescriptionByAnyWord(product, queries))
                 .sorted(new RelevanceComparator(queries));
     }
 
-    private Stream<Product> filterByDescriptionByAllWords(Stream<Product> stream, String query) {
+    private Stream<Product> filterDescriptionByAllWords(Stream<Product> stream, String query) {
         String[] queries = split(query);
         return stream
-                .filter(product -> {
-                    for (String importantWord : queries) {
-                        if (!product.getDescription().contains(importantWord)) {
-                            return false;
-                        }
-                    }
-                    return true;
-                });
+                .filter(product -> filterDescriptionByAllWords(product, queries))
+                .sorted(new RelevanceComparator(queries));
     }
 
     private String[] split(String query) {
@@ -123,7 +122,7 @@ public final class ArrayListProductDao extends ProductDao {
         return descDescriptionComparator;
     }
 
-    private boolean filterDescription(Product product, String[] queries) {
+    private boolean filterDescriptionByAnyWord(Product product, String[] queries) {
         if (queries.length == 0) {
             return true;
         }
@@ -134,6 +133,19 @@ public final class ArrayListProductDao extends ProductDao {
             }
         }
         return false;
+    }
+
+    private boolean filterDescriptionByAllWords(Product product, String[] queries) {
+        if (queries.length == 0) {
+            return true;
+        }
+        String description = product.getDescription();
+        for (String x : queries) {
+            if (!description.toLowerCase().contains(x.toLowerCase())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private int countNumOfMatchingSubstrings(String description, String[] queries) {

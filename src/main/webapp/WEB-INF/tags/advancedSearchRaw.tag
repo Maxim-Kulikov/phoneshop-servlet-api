@@ -3,6 +3,7 @@
 <%@ attribute name="name" required="true" %>
 <%@ attribute name="label" required="true" %>
 <%@ attribute name="errors" required="true" type="java.util.Map" %>
+<%@ attribute name="descriptionSearchStrategies" required="false" type="java.util.List" %>
 
 <tr>
     <td>${label}</td>
@@ -15,4 +16,18 @@
             </div>
         </c:if>
     </td>
+    <c:if test="${name eq 'description'}">
+        <td>
+            <select name="descriptionSearchStrategy">
+                <c:if test="${not empty param.descriptionSearchStrategy}">
+                    <option>${param.descriptionSearchStrategy}</option>
+                </c:if>
+                <c:forEach var="method" items="${descriptionSearchStrategies}">
+                    <c:if test="${param.descriptionSearchStrategy != method}">
+                        <option>${method}</option>
+                    </c:if>
+                </c:forEach>
+            </select>
+        </td>
+    </c:if>
 </tr>
